@@ -17,6 +17,16 @@
 #include "ScreenManager.h"
 #include "ScreenSelectMaster.h"
 #include "ThemeManager.h"
+#include "Difficulty.h"
+#include "GameManager.h"
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "Song.h"
+#include "SongManager.h"
+#include "SongUtil.h"
+#include "Steps.h"
+#include "Style.h"
+#include <cstdlib>
 
 #define COIN_MODE_CHANGE_SCREEN \
   THEME->GetMetric(m_sName, "CoinModeChangeScreen")
@@ -39,6 +49,68 @@ void ScreenTitleMenu::Init() {
   ScreenSelectMaster::Init();
 
   SOUND->PlayOnceFromAnnouncer("title menu game name");
+}
+
+void ScreenTitleMenu::Update(float fDeltaTime) {
+  ScreenSelectMaster::Update(fDeltaTime);
+  if (!m_bTestAutostartDone && std::getenv("ITG_TEST_AUTOSTART") != nullptr) {
+    m_fTestAutostartTimer += fDeltaTime;
+    if (m_fTestAutostartTimer > 2.0f) {
+      m_bTestAutostartDone = true;
+      TestAutostart();
+    }
+  }
+}
+
+/* Test-automation hook (only active when the ITG_TEST_AUTOSTART environment
+ * variable is set). Format:
+ *   ITG_TEST_AUTOSTART="<style>;<group/songdir>;<diff,diff,...>[;<screen>]"
+ * e.g. "quad;QuadGroup/QuadTest;Beginner,Easy,Medium,Hard;ScreenGameplay".
+ * Joins one player per listed difficulty, sets the style, song and per-player
+ * steps, then jumps straight to the given screen. */
+void ScreenTitleMenu::TestAutostart() {
+  const char* env = std::getenv("ITG_TEST_AUTOSTART");
+  if (env == nullptr || *env == '\0') {
+    return;
+  }
+  std::vector<std::string> parts;
+  split(env, ";", parts);
+  if (parts.size() < 3) {
+    LOG->Warn("ITG_TEST_AUTOSTART: need style;song;difficulties");
+    return;
+  }
+  std::vector<std::string> diffs;
+  split(parts[2], ",", diffs);
+  const Style* style =
+      GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame, parts[0]);
+  Song* song = SONGMAN->FindSong(parts[1]);
+  if (style == nullptr || song == nullptr) {
+    LOG->Warn(
+        "ITG_TEST_AUTOSTART: style '%s' or song '%s' not found",
+        parts[0].c_str(), parts[1].c_str());
+    return;
+  }
+  for (size_t i = 0; i < diffs.size() && i < (size_t)NUM_PLAYERS; ++i) {
+    GAMESTATE->JoinPlayer((PlayerNumber)i);
+  }
+  GAMESTATE->m_PlayMode.Set(PLAY_MODE_REGULAR);
+  GAMESTATE->SetCurrentStyle(style, PLAYER_INVALID);
+  GAMESTATE->m_pCurSong.Set(song);
+  for (size_t i = 0; i < diffs.size() && i < (size_t)NUM_PLAYERS; ++i) {
+    PlayerNumber pn = (PlayerNumber)i;
+    Difficulty dc = StringToDifficulty(diffs[i]);
+    Steps* steps = SongUtil::GetOneSteps(song, style->m_StepsType, dc);
+    if (steps == nullptr) {
+      LOG->Warn("ITG_TEST_AUTOSTART: no %s steps", diffs[i].c_str());
+      continue;
+    }
+    GAMESTATE->m_PreferredDifficulty[pn].Set(dc);
+    GAMESTATE->m_pCurSteps[pn].Set(steps);
+  }
+  LOG->Info(
+      "ITG_TEST_AUTOSTART: %d player(s) joined, style %s",
+      GAMESTATE->GetNumSidesJoined(), style->m_szName);
+  SCREENMAN->SetNewScreen(parts.size() > 3 ? parts[3] : "ScreenGameplay");
 }
 
 static LocalizedString THEME_("ScreenTitleMenu", "Theme");

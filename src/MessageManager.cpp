@@ -21,9 +21,17 @@ static const char* MessageIDNames[] = {
     "CurrentSongChanged",
     "CurrentStepsP1Changed",
     "CurrentStepsP2Changed",
+#if ITG_MAX_PLAYERS >= 4
+    "CurrentStepsP3Changed",
+    "CurrentStepsP4Changed",
+#endif
     "CurrentCourseChanged",
     "CurrentTrailP1Changed",
     "CurrentTrailP2Changed",
+#if ITG_MAX_PLAYERS >= 4
+    "CurrentTrailP3Changed",
+    "CurrentTrailP4Changed",
+#endif
     "GameplayLeadInChanged",
     "EditStepsTypeChanged",
     "EditCourseDifficultyChanged",
@@ -32,29 +40,65 @@ static const char* MessageIDNames[] = {
     "PreferredStepsTypeChanged",
     "PreferredDifficultyP1Changed",
     "PreferredDifficultyP2Changed",
+#if ITG_MAX_PLAYERS >= 4
+    "PreferredDifficultyP3Changed",
+    "PreferredDifficultyP4Changed",
+#endif
     "PreferredCourseDifficultyP1Changed",
     "PreferredCourseDifficultyP2Changed",
+#if ITG_MAX_PLAYERS >= 4
+    "PreferredCourseDifficultyP3Changed",
+    "PreferredCourseDifficultyP4Changed",
+#endif
     "EditCourseEntryIndexChanged",
     "EditLocalProfileIDChanged",
     "GoalCompleteP1",
     "GoalCompleteP2",
+#if ITG_MAX_PLAYERS >= 4
+    "GoalCompleteP3",
+    "GoalCompleteP4",
+#endif
     "NoteCrossed",
     "NoteWillCrossIn400Ms",
     "NoteWillCrossIn800Ms",
     "NoteWillCrossIn1200Ms",
     "CardRemovedP1",
     "CardRemovedP2",
+#if ITG_MAX_PLAYERS >= 4
+    "CardRemovedP3",
+    "CardRemovedP4",
+#endif
     "BeatCrossed",
     "MenuUpP1",
     "MenuUpP2",
+#if ITG_MAX_PLAYERS >= 4
+    "MenuUpP3",
+    "MenuUpP4",
+#endif
     "MenuDownP1",
     "MenuDownP2",
+#if ITG_MAX_PLAYERS >= 4
+    "MenuDownP3",
+    "MenuDownP4",
+#endif
     "MenuLeftP1",
     "MenuLeftP2",
+#if ITG_MAX_PLAYERS >= 4
+    "MenuLeftP3",
+    "MenuLeftP4",
+#endif
     "MenuRightP1",
     "MenuRightP2",
+#if ITG_MAX_PLAYERS >= 4
+    "MenuRightP3",
+    "MenuRightP4",
+#endif
     "MenuStartP1",
     "MenuStartP2",
+#if ITG_MAX_PLAYERS >= 4
+    "MenuStartP3",
+    "MenuStartP4",
+#endif
     "MenuSelectionChanged",
     "PlayerJoined",
     "PlayerUnjoined",
@@ -74,14 +118,34 @@ static const char* MessageIDNames[] = {
     "SongModified",
     "ScoreMultiplierChangedP1",
     "ScoreMultiplierChangedP2",
+#if ITG_MAX_PLAYERS >= 4
+    "ScoreMultiplierChangedP3",
+    "ScoreMultiplierChangedP4",
+#endif
     "StarPowerChangedP1",
     "StarPowerChangedP2",
+#if ITG_MAX_PLAYERS >= 4
+    "StarPowerChangedP3",
+    "StarPowerChangedP4",
+#endif
     "CurrentComboChangedP1",
     "CurrentComboChangedP2",
+#if ITG_MAX_PLAYERS >= 4
+    "CurrentComboChangedP3",
+    "CurrentComboChangedP4",
+#endif
     "StarMeterChangedP1",
     "StarMeterChangedP2",
+#if ITG_MAX_PLAYERS >= 4
+    "StarMeterChangedP3",
+    "StarMeterChangedP4",
+#endif
     "LifeMeterChangedP1",
     "LifeMeterChangedP2",
+#if ITG_MAX_PLAYERS >= 4
+    "LifeMeterChangedP3",
+    "LifeMeterChangedP4",
+#endif
     "UpdateScreenHeader",
     "LeftClick",
     "RightClick",

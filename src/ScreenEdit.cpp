@@ -2584,6 +2584,7 @@ static void ShiftToRightSide(int& iCol, int iNumTracks) {
     case StyleType_OnePlayerOneSide:
       break;
     case StyleType_TwoPlayersTwoSides:
+    case StyleType_FourPlayersFourSides:
     case StyleType_OnePlayerTwoSides:
     case StyleType_TwoPlayersSharedSides:
       iCol += iNumTracks / 2;

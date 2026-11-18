@@ -11,6 +11,10 @@ class ScreenTitleMenu : public ScreenSelectMaster {
  public:
   ScreenTitleMenu();
   virtual void Init();
+  virtual void Update(float fDeltaTime);
+  void TestAutostart();
+  float m_fTestAutostartTimer = 0;
+  bool m_bTestAutostartDone = false;
 
   virtual bool Input(const InputEventPlus& input);
 

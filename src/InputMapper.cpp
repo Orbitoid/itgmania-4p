@@ -83,7 +83,10 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped() {
   // Clear default mappings.  Default mappings are in the third slot.
   FOREACH_ENUM(GameController, i)
   FOREACH_ENUM(GameButton, j)
-  ClearFromInputMap(GameInput(i, j), 2);
+  {
+    ClearFromInputMap(GameInput(i, j), 2);
+    ClearFromInputMap(GameInput(i, j), 3);
+  }
 
   std::vector<AutoMappingEntry> aMaps;
   aMaps.reserve(32);
@@ -95,6 +98,32 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped() {
        m_pInputScheme->m_pAutoMappings->m_vMaps) {
     aMaps.push_back(iter);
   }
+#if ITG_MAX_PLAYERS >= 4
+  if (EqualsNoCase(m_pInputScheme->m_szName, "dance")) {
+    // Extra keyboard bindings for testing 4-player mode (slot 3 so they do not
+    // collide with the stock slot-2 bindings). Left/Down/Up/Right per player:
+    //   P1: q w e r   P2: t y u i   P3: o p [ ]   P4: a s d f
+    // Start for P3 = 'l', P4 = 'g' (P1 Enter, P2 numpad Enter as before).
+    static const DeviceButton keys[4][4] = {
+        {KEY_Cq, KEY_Cw, KEY_Ce, KEY_Cr},
+        {KEY_Ct, KEY_Cy, KEY_Cu, KEY_Ci},
+        {KEY_Co, KEY_Cp, KEY_LBRACKET, KEY_RBRACKET},
+        {KEY_Ca, KEY_Cs, KEY_Cd, KEY_Cf}};
+    static const GameButton btns[4] = {
+        DANCE_BUTTON_LEFT, DANCE_BUTTON_DOWN, DANCE_BUTTON_UP,
+        DANCE_BUTTON_RIGHT};
+    for (int c = 0; c < 4; ++c) {
+      for (int b = 0; b < 4; ++b) {
+        aMaps.push_back(
+            AutoMappingEntry::ForController(3, keys[c][b], btns[b], c));
+      }
+    }
+    aMaps.push_back(AutoMappingEntry::ForController(
+        3, KEY_Cl, GAME_BUTTON_START, 2));
+    aMaps.push_back(AutoMappingEntry::ForController(
+        3, KEY_Cg, GAME_BUTTON_START, 3));
+  }
+#endif
 
   /* There may be duplicate GAME_BUTTON maps.  Process the list backwards,
    * so game-specific mappings override g_DefaultKeyMappings. */
@@ -103,15 +132,16 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped() {
   for (const AutoMappingEntry& m : aMaps) {
     DeviceButton key = m.m_deviceButton;
     DeviceInput DeviceI(DEVICE_KEYBOARD, key);
-    GameInput GameI(
-        m.m_bSecondController ? GameController_2 : GameController_1, m.m_gb);
+    GameInput GameI((GameController)m.m_iController, m.m_gb);
     if (!IsMapped(DeviceI))  // if this key isn't already being used by another
                              // user-made mapping
     {
       if (!GameI.IsValid()) {
         ClearFromInputMap(DeviceI);
       } else {
-        SetInputMap(DeviceI, GameI, 2);
+        // Entries with an explicit slot >= 3 are extra keyboard bindings that
+        // must not collide with the default slot-2 bindings.
+        SetInputMap(DeviceI, GameI, m.m_iSlotIndex >= 3 ? m.m_iSlotIndex : 2);
       }
     }
   }
@@ -661,7 +691,8 @@ void InputMapper::AutoMapJoysticksForCurrentGame() {
               continue;
             }
 
-            AutoMappingEntry im(s, DeviceI.button, b, c > GameController_1);
+            AutoMappingEntry im = AutoMappingEntry::ForController(
+                s, DeviceI.button, b, (int)c);
             mapping.m_vMaps.push_back(im);
           }
         }
@@ -1140,8 +1171,9 @@ void InputScheme::MenuButtonToGameInputs(
   MenuButtonToGameButtons(MenuI, aGameButtons);
   for (const GameButton& gb : aGameButtons) {
     if (pn == PLAYER_INVALID) {
-      GameIout.push_back(GameInput(GameController_1, gb));
-      GameIout.push_back(GameInput(GameController_2, gb));
+      FOREACH_ENUM(GameController, gc) {
+        GameIout.push_back(GameInput(gc, gb));
+      }
     } else {
       GameIout.push_back(GameInput((GameController)pn, gb));
     }

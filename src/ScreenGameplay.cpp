@@ -600,6 +600,16 @@ void ScreenGameplay::Init() {
   std::vector<NotefieldMargins> margins = GetNotefieldMargins();
 
   float left_edge[NUM_PLAYERS] = {0.0f, SCREEN_WIDTH / 2.0f};
+  // 4-player mode: each field gets its own quarter of the screen.
+  const bool bQuadStyle =
+      GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr &&
+      GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType ==
+          StyleType_FourPlayersFourSides;
+  if (bQuadStyle) {
+    for (int i = 0; i < NUM_PLAYERS; ++i) {
+      left_edge[i] = i * SCREEN_WIDTH / 4.0f;
+    }
+  }
   FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
     std::string sName = ssprintf("Player%s", pi->GetName().c_str());
     pi->m_pPlayer->SetName(sName);
@@ -627,12 +637,17 @@ void ScreenGameplay::Init() {
       screen_space = SCREEN_WIDTH / 2.0f;
       left_marge = margins[pi->m_pn].left;
       right_marge = margins[pi->m_pn].right;
+      if (bQuadStyle) {
+        screen_space = SCREEN_WIDTH / 4.0f;
+        left_marge = right_marge = 4.0f;
+      }
       field_space = screen_space - left_marge - right_marge;
-      if (Center1Player() ||
-          style->m_StyleType == StyleType_TwoPlayersSharedSides ||
-          (style_width > field_space &&
-           GAMESTATE->GetNumPlayersEnabled() == 1 &&
-           (bool)ALLOW_CENTER_1_PLAYER)) {
+      if (!bQuadStyle &&
+          (Center1Player() ||
+           style->m_StyleType == StyleType_TwoPlayersSharedSides ||
+           (style_width > field_space &&
+            GAMESTATE->GetNumPlayersEnabled() == 1 &&
+            (bool)ALLOW_CENTER_1_PLAYER))) {
         CENTER_PLAYER_BLOCK
       }
     }

@@ -1,6 +1,7 @@
 #ifndef GAME_INPUT_H
 #define GAME_INPUT_H
 
+#include "PlayerNumber.h"
 #include <string>
 
 #include "EnumHelper.h"
@@ -11,6 +12,10 @@ class InputScheme;
 enum GameController {
   GameController_1 = 0, /**< The left controller */
   GameController_2,     /**< The right controller */
+#if ITG_MAX_PLAYERS >= 4
+  GameController_3,
+  GameController_4,
+#endif
   NUM_GameController,   /**< The number of controllers allowed. */
   GameController_Invalid,
 };

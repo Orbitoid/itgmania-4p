@@ -1,6 +1,7 @@
 #ifndef MessageManager_H
 #define MessageManager_H
 
+#include "PlayerNumber.h"
 #include <string>
 #include <vector>
 
@@ -19,9 +20,17 @@ enum MessageID {
   Message_CurrentSongChanged,
   Message_CurrentStepsP1Changed,
   Message_CurrentStepsP2Changed,
+#if ITG_MAX_PLAYERS >= 4
+  Message_CurrentStepsP3Changed,
+  Message_CurrentStepsP4Changed,
+#endif
   Message_CurrentCourseChanged,
   Message_CurrentTrailP1Changed,
   Message_CurrentTrailP2Changed,
+#if ITG_MAX_PLAYERS >= 4
+  Message_CurrentTrailP3Changed,
+  Message_CurrentTrailP4Changed,
+#endif
   Message_GameplayLeadInChanged,
   Message_EditStepsTypeChanged,
   Message_EditCourseDifficultyChanged,
@@ -30,29 +39,65 @@ enum MessageID {
   Message_PreferredStepsTypeChanged,
   Message_PreferredDifficultyP1Changed,
   Message_PreferredDifficultyP2Changed,
+#if ITG_MAX_PLAYERS >= 4
+  Message_PreferredDifficultyP3Changed,
+  Message_PreferredDifficultyP4Changed,
+#endif
   Message_PreferredCourseDifficultyP1Changed,
   Message_PreferredCourseDifficultyP2Changed,
+#if ITG_MAX_PLAYERS >= 4
+  Message_PreferredCourseDifficultyP3Changed,
+  Message_PreferredCourseDifficultyP4Changed,
+#endif
   Message_EditCourseEntryIndexChanged,
   Message_EditLocalProfileIDChanged,
   Message_GoalCompleteP1,
   Message_GoalCompleteP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_GoalCompleteP3,
+  Message_GoalCompleteP4,
+#endif
   Message_NoteCrossed,
   Message_NoteWillCrossIn400Ms,
   Message_NoteWillCrossIn800Ms,
   Message_NoteWillCrossIn1200Ms,
   Message_CardRemovedP1,
   Message_CardRemovedP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_CardRemovedP3,
+  Message_CardRemovedP4,
+#endif
   Message_BeatCrossed,
   Message_MenuUpP1,
   Message_MenuUpP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_MenuUpP3,
+  Message_MenuUpP4,
+#endif
   Message_MenuDownP1,
   Message_MenuDownP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_MenuDownP3,
+  Message_MenuDownP4,
+#endif
   Message_MenuLeftP1,
   Message_MenuLeftP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_MenuLeftP3,
+  Message_MenuLeftP4,
+#endif
   Message_MenuRightP1,
   Message_MenuRightP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_MenuRightP3,
+  Message_MenuRightP4,
+#endif
   Message_MenuStartP1,
   Message_MenuStartP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_MenuStartP3,
+  Message_MenuStartP4,
+#endif
   Message_MenuSelectionChanged,
   Message_PlayerJoined,
   Message_PlayerUnjoined,
@@ -72,14 +117,34 @@ enum MessageID {
   Message_SongModified,
   Message_ScoreMultiplierChangedP1,
   Message_ScoreMultiplierChangedP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_ScoreMultiplierChangedP3,
+  Message_ScoreMultiplierChangedP4,
+#endif
   Message_StarPowerChangedP1,
   Message_StarPowerChangedP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_StarPowerChangedP3,
+  Message_StarPowerChangedP4,
+#endif
   Message_CurrentComboChangedP1,
   Message_CurrentComboChangedP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_CurrentComboChangedP3,
+  Message_CurrentComboChangedP4,
+#endif
   Message_StarMeterChangedP1,
   Message_StarMeterChangedP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_StarMeterChangedP3,
+  Message_StarMeterChangedP4,
+#endif
   Message_LifeMeterChangedP1,
   Message_LifeMeterChangedP2,
+#if ITG_MAX_PLAYERS >= 4
+  Message_LifeMeterChangedP3,
+  Message_LifeMeterChangedP4,
+#endif
   Message_UpdateScreenHeader,
   Message_LeftClick,
   Message_RightClick,

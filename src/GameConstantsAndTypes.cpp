@@ -360,6 +360,7 @@ static const char* StyleTypeNames[] = {
     "TwoPlayersTwoSides",
     "OnePlayerTwoSides",
     "TwoPlayersSharedSides",
+    "FourPlayersFourSides",
 };
 XToString(StyleType);
 StringToX(StyleType);

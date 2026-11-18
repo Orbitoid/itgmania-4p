@@ -103,6 +103,7 @@ endif()
 
 # Compilation flags per project here.
 target_compile_definitions("${SM_EXE_NAME}" PRIVATE $<$<CONFIG:Debug>:DEBUG>)
+target_compile_definitions("${SM_EXE_NAME}" PRIVATE ITG_MAX_PLAYERS=${ITG_MAX_PLAYERS})
 target_compile_definitions("${SM_EXE_NAME}" PRIVATE $<$<CONFIG:Release>:RELEASE>)
 target_compile_definitions("${SM_EXE_NAME}" PRIVATE $<$<CONFIG:MinSizeRel>:MINSIZEREL>)
 target_compile_definitions("${SM_EXE_NAME}" PRIVATE

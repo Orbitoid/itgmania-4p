@@ -64,3 +64,7 @@ if(LINUX)
   option(WITH_X11 "Build with X11 support" ON)
 endif()
 
+
+# Maximum number of players compiled in (2 = stock behaviour, 4 = 4-player mode).
+set(ITG_MAX_PLAYERS 2 CACHE STRING "Maximum number of players (2 or 4)")
+set_property(CACHE ITG_MAX_PLAYERS PROPERTY STRINGS 2 4)

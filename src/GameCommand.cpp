@@ -507,6 +507,8 @@ int GetCreditsRequiredToPlayStyle(const Style* style) {
     case StyleType_TwoPlayersSharedSides:
     case StyleType_TwoPlayersTwoSides:
       return 2;
+    case StyleType_FourPlayersFourSides:
+      return 4;
     case StyleType_OnePlayerTwoSides:
       return (GAMESTATE->GetPremium() == Premium_DoubleFor1Credit) ? 1 : 2;
       DEFAULT_FAIL(style->m_StyleType);
@@ -724,6 +726,10 @@ void GameCommand::ApplySelf(const std::vector<PlayerNumber>& vpns) const {
         break;
       case StyleType_TwoPlayersTwoSides:
       case StyleType_TwoPlayersSharedSides: {
+        GAMESTATE->JoinPlayer(PLAYER_1);
+        GAMESTATE->JoinPlayer(PLAYER_2);
+      } break;
+      case StyleType_FourPlayersFourSides: {
         FOREACH_PlayerNumber(p) GAMESTATE->JoinPlayer(p);
       } break;
       default:

@@ -10,6 +10,10 @@
 static const char* GameControllerNames[] = {
     "1",
     "2",
+#if ITG_MAX_PLAYERS >= 4
+    "3",
+    "4",
+#endif
 };
 XToString(GameController);
 StringToX(GameController);

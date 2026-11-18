@@ -18,12 +18,24 @@ extern const std::string DEVICE_INPUT_SEPARATOR;
 
 struct AutoMappingEntry {
   AutoMappingEntry(int i, DeviceButton db, GameButton gb, bool b)
-      : m_iSlotIndex(i), m_deviceButton(db), m_gb(gb), m_bSecondController(b) {}
+      : m_iSlotIndex(i),
+        m_deviceButton(db),
+        m_gb(gb),
+        m_bSecondController(b),
+        m_iController(b ? 1 : 0) {}
+  /** @brief Entry for an explicit controller index (needed for P3/P4). */
+  static AutoMappingEntry ForController(
+      int slot, DeviceButton db, GameButton gb, int controller) {
+    AutoMappingEntry e(slot, db, gb, controller > 0);
+    e.m_iController = controller;
+    return e;
+  }
   AutoMappingEntry()
       : m_iSlotIndex(-1),
         m_deviceButton(DeviceButton_Invalid),
         m_gb(GameButton_Invalid),
-        m_bSecondController(false) {}
+        m_bSecondController(false),
+        m_iController(0) {}
   bool IsEmpty() const {
     return m_deviceButton == DeviceButton_Invalid && m_gb == GameButton_Invalid;
   }
@@ -38,6 +50,8 @@ struct AutoMappingEntry {
    * can't tell if a slave pad is actually there.) Then, if a second primary
    * is found (DEVICE_PUMP2), 2P will be mapped to it. */
   bool m_bSecondController;
+  /** Game controller index this entry maps to (0-based). */
+  int m_iController;
 };
 
 struct AutoMappings {

@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 1 done: stage 0 complete, stage 1 audit written; stage 2 started)
+STATUS: IN PROGRESS (run 1: stage 0 done, stage 1 audit done, stage 2 engine mostly working: 4 fields render in gameplay)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -45,8 +45,20 @@ Routine/Couples approach (v1.3.0 PRs ~#1216/#1433): they added `StyleType_TwoPla
 Make `NUM_PlayerNumber` configurable at **build time** via CMake `-DITG_MAX_PLAYERS=4` (default 2 → binary identical in behaviour). With 4 compiled in, runtime player count limited by a style: only the new quad style allows >2 sides joined. Steps: (a) enum + OPPOSITE_PLAYER, (b) GameController 3/4, (c) style dance-quad, (d) GameState join logic for 3/4, (e) profiles/slots, (f) ScreenGameplay field placement, (g) eval. Status: see "Progress log".
 
 ## Progress log
+- Run 1 (later): ITG_MAX_PLAYERS=4 build compiles and runs; quad gameplay screenshot with 4 fields.
 - Run 1: environment + build + visual pipeline verified (stage 0 done except evaluation baseline); audit written; test-song generator and tools/visual-lib.sh added.
 
+## Run 1 engine results (stage 2 — see `git log`)
+Build flag: `cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DITG_MAX_PLAYERS=4` (default 2 = stock). `ITG_MAX_PLAYERS` macro in `src/PlayerNumber.h` gates PLAYER_3/4, GameController_3/4, Message_*P3/P4, mem-card mount points.
+Done: enum + names; `StyleType_FourPlayersFourSides`; style `dance` "quad" (4 players x 4 cols, StepsType dance-single); GameCommand/GameState join + IsHumanPlayer (2P styles now only humanise P1/P2 so 4P build keeps versus at 2); credits 4; ScreenGameplay puts each field in its own screen quarter; ArrowEffects mirror for odd players; keyboard defaults for 4 controllers (slot 3): P1 q w e r, P2 t y u i, P3 o p [ ], P4 a s d f; P3 Start=l, P4 Start=g; `AutoMappingEntry::ForController`.
+Test hook: env `ITG_TEST_AUTOSTART="quad;QuadGroup/QuadTest;Beginner,Easy,Medium,Hard;ScreenGameplay"` (ScreenTitleMenu::TestAutostart, 2 s after title) joins N players, sets style/song/steps, jumps to the screen. Guarded by the env var only.
+Theme: because Simply Love is a submodule (110 MB), the 4P theme is an **overlay theme** `Themes/Simply Love 4P` (`FallbackTheme=Simply Love`, only differences). `Scripts/ZZ-4P.lua`: quarter-screen GetNotefieldX, SL.P3/SL.P4, THEME proxy so GetCurrentThemeDirectory() points at base SL. `tools/gen-4p-metrics.py` generates P3/P4 metric twins (P3<-P1 values, P4<-P2) into its metrics.ini. NOTE: Preferences.ini must have `Theme=Simply Love 4P` in BOTH [Options] and [Game-dance] (vt_set_pref does it; edit only while the game is stopped — a dying game rewrites the file).
+Screenshot looked at: docs/screenshots/02-quad-gameplay-4-difficulties.png — FOUR note fields side by side, one per quarter of the 1280x720 screen, miss counters 22/43/85/27 (different charts per player = different note density), MISS judgments in each quarter. Not yet right: scores/life bars/profile names/step-info not laid out for 4P; combo/judgment overlap not addressed (stage 4); one SL Lua error `ScreenGameplay underlay/PerPlayer/StepStatistics/default.lua:19`.
+Known engine gaps: 3-player join (only 4 sides join quad; no 3P style), ScreenSelect* navigation for P3/P4 untested, profiles for P3/P4 (ProfileSlot enums) untested, evaluation untested, save-format unchanged so far, Lua/`PlayerNumber` loops in the base theme are still 2-wide.
+
 ## Next
-1. Commit/push (done at end of run 1).
-2. Stage 2a: add `ITG_MAX_PLAYERS` CMake option and make the tree compile with 4; fix compile/ASSERT fallout; keep default 2.
+0. FIRST next run: `git submodule update --init --recursive --depth 1`, apt deps (above), cmake with -DITG_MAX_PLAYERS=4, then `tools/visual-test.sh`.
+1. Stage 2 rest: StageStats/eval for 4 players (ScreenEvaluation with P3/P4), life bar / score per player, profile slots P3/P4, join via menus (ScreenSelectStyle "quad"), verify default (ITG_MAX_PLAYERS=2) build still plays 2P.
+2. Stage 3: input verification per player with xdotool keys (q/w/e/r etc.), log judgments.
+3. Stage 4: SL overlay layout for 4 (judgment/combo scale 0.6, score/life per quarter, distinct P1-P4 colours).
+4. Stages 5-6 tests + docs/4-player.md.

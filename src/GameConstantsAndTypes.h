@@ -548,6 +548,7 @@ enum StyleType {
   StyleType_TwoPlayersTwoSides,    /**< Versus style */
   StyleType_OnePlayerTwoSides,     /**< Double style */
   StyleType_TwoPlayersSharedSides, /**< Routine style */
+  StyleType_FourPlayersFourSides,  /**< Quad style (4-player mode) */
   NUM_StyleType,
   StyleType_Invalid
 };

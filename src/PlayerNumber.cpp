@@ -6,6 +6,10 @@
 static const char* PlayerNumberNames[] = {
     "P1",
     "P2",
+#if ITG_MAX_PLAYERS >= 4
+    "P3",
+    "P4",
+#endif
 };
 XToString(PlayerNumber);
 XToLocalizedString(PlayerNumber);

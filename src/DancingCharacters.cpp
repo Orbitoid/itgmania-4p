@@ -95,8 +95,16 @@ const ThemeMetric<RageColor> LIGHT_DFAILED_COLOR(
   THEME->GetMetricF("DancingCamera", "BeatsUntilNextCamPos")
 #define CAM_FOV THEME->GetMetricF("DancingCamera", "CameraFOV")
 
-const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = {+8, -8};
-const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = {-90, 90};
+const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = {+8, -8
+#if ITG_MAX_PLAYERS >= 4
+    , +8, -8
+#endif
+};
+const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = {-90, 90
+#if ITG_MAX_PLAYERS >= 4
+    , -90, 90
+#endif
+};
 
 DancingCharacters::DancingCharacters()
     : m_bDrawDangerLight(false),

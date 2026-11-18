@@ -190,6 +190,49 @@ static const Style g_Style_Dance_Versus = {
     false,  // m_bLockDifficulties
 };
 
+#if ITG_MAX_PLAYERS >= 4
+// Four players, each on their own 4-panel pad (4-player mode).
+static const Style g_Style_Dance_Quad = {
+    // STYLE_DANCE_QUAD
+    true,                           // m_bUsedForGameplay
+    false,                          // m_bUsedForEdit
+    false,                          // m_bUsedForDemonstration
+    false,                          // m_bUsedForHowToPlay
+    "quad",                         // m_szName
+    StepsType_dance_single,         // m_StepsType
+    StyleType_FourPlayersFourSides, // m_StyleType
+    4,                              // m_iColsPerPlayer
+    {
+        // m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+        {{TRACK_1, -DANCE_COL_SPACING * 1.5f, nullptr},
+         {TRACK_2, -DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_3, +DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_4, +DANCE_COL_SPACING * 1.5f, nullptr}},
+        {{TRACK_1, -DANCE_COL_SPACING * 1.5f, nullptr},
+         {TRACK_2, -DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_3, +DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_4, +DANCE_COL_SPACING * 1.5f, nullptr}},
+        {{TRACK_1, -DANCE_COL_SPACING * 1.5f, nullptr},
+         {TRACK_2, -DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_3, +DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_4, +DANCE_COL_SPACING * 1.5f, nullptr}},
+        {{TRACK_1, -DANCE_COL_SPACING * 1.5f, nullptr},
+         {TRACK_2, -DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_3, +DANCE_COL_SPACING * 0.5f, nullptr},
+         {TRACK_4, +DANCE_COL_SPACING * 1.5f, nullptr}},
+    },
+    {// m_iInputColumn[NUM_GameController][NUM_GameButton]
+     {0, 3, 2, 1, Style::END_MAPPING},
+     {0, 3, 2, 1, Style::END_MAPPING},
+     {0, 3, 2, 1, Style::END_MAPPING},
+     {0, 3, 2, 1, Style::END_MAPPING}},
+    {// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+     0, 1, 2, 3},
+    false,  // m_bCanUseBeginnerHelper
+    false,  // m_bLockDifficulties
+};
+#endif
+
 static const Style g_Style_Dance_Double = {
     // STYLE_DANCE_DOUBLE
     true,                         // m_bUsedForGameplay
@@ -480,6 +523,9 @@ static const Style* g_apGame_Dance_Styles[] = {&g_Style_Dance_Single,
                                                &g_Style_Dance_Couple_Edit,
                                                &g_Style_Dance_Routine,
                                                &g_Style_Dance_ThreePanel,
+#if ITG_MAX_PLAYERS >= 4
+                                               &g_Style_Dance_Quad,
+#endif
                                                nullptr};
 
 static const Game g_Game_Dance = {
@@ -1604,6 +1650,9 @@ void GameManager::GetCompatibleStyles(
       case StyleType_TwoPlayersTwoSides:
       case StyleType_TwoPlayersSharedSides:
         iNumPlayersRequired = 2;
+        break;
+      case StyleType_FourPlayersFourSides:
+        iNumPlayersRequired = 4;
         break;
     }
 

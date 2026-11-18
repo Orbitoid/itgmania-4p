@@ -7,10 +7,22 @@
 
 #include "EnumHelper.h"
 
+// Maximum number of players compiled into the engine (CMake option
+// ITG_MAX_PLAYERS, 2 or 4). Default is 2, which keeps the stock behaviour.
+#ifndef ITG_MAX_PLAYERS
+#define ITG_MAX_PLAYERS 2
+#endif
+static_assert(ITG_MAX_PLAYERS == 2 || ITG_MAX_PLAYERS == 4,
+              "ITG_MAX_PLAYERS must be 2 or 4");
+
 // Player number stuff
 enum PlayerNumber {
   PLAYER_1 = 0,
   PLAYER_2,
+#if ITG_MAX_PLAYERS >= 4
+  PLAYER_3,
+  PLAYER_4,
+#endif
   NUM_PlayerNumber,  // leave this at the end
   PlayerNumber_Invalid
 };
@@ -22,7 +34,12 @@ LuaDeclareType(PlayerNumber);
 /** @brief A foreach loop to handle the different players. */
 #define FOREACH_PlayerNumber(pn) FOREACH_ENUM(PlayerNumber, pn)
 
+#if ITG_MAX_PLAYERS >= 4
+const PlayerNumber OPPOSITE_PLAYER[NUM_PLAYERS] = {PLAYER_2, PLAYER_1, PLAYER_4,
+                                                   PLAYER_3};
+#else
 const PlayerNumber OPPOSITE_PLAYER[NUM_PLAYERS] = {PLAYER_2, PLAYER_1};
+#endif
 
 enum MultiPlayer {
   MultiPlayer_P1 = 0,

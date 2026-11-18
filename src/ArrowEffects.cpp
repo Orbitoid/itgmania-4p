@@ -1005,9 +1005,10 @@ float ArrowEffects::GetXPos(
         }
       } break;
       case StyleType_OnePlayerOneSide:
+      case StyleType_FourPlayersFourSides:
       case StyleType_TwoPlayersTwoSides: {
         // the code was the same for both of these cases in StepNXA.
-        if (pPlayerState->m_PlayerNumber == PLAYER_2) {
+        if (static_cast<int>(pPlayerState->m_PlayerNumber) % 2 == 1) {
           fPixelOffsetFromCenter +=
               fEffects[PlayerOptions::EFFECT_XMODE] * -(fYOffset);
         } else {

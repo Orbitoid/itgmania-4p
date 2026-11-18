@@ -434,6 +434,7 @@ void GameState::JoinPlayer(PlayerNumber pn) {
   if (cur_style != nullptr &&
       !(pn == PLAYER_1 &&
         (cur_style->m_StyleType == StyleType_TwoPlayersTwoSides ||
+         cur_style->m_StyleType == StyleType_FourPlayersFourSides ||
          cur_style->m_StyleType == StyleType_TwoPlayersSharedSides))) {
     const Style* pStyle;
     // Only use one player for StyleType_OnePlayerTwoSides and StepsTypes
@@ -1642,6 +1643,8 @@ bool GameState::IsHumanPlayer(PlayerNumber pn) const {
       switch (type) {
         case StyleType_TwoPlayersTwoSides:
         case StyleType_TwoPlayersSharedSides:
+          return pn == PLAYER_1 || pn == PLAYER_2;
+        case StyleType_FourPlayersFourSides:
           return true;
         case StyleType_OnePlayerOneSide:
         case StyleType_OnePlayerTwoSides:
@@ -1661,6 +1664,8 @@ bool GameState::IsHumanPlayer(PlayerNumber pn) const {
   switch (type) {
     case StyleType_TwoPlayersTwoSides:
     case StyleType_TwoPlayersSharedSides:
+      return pn == PLAYER_1 || pn == PLAYER_2;
+    case StyleType_FourPlayersFourSides:
       return true;
     case StyleType_OnePlayerOneSide:
     case StyleType_OnePlayerTwoSides:
@@ -3232,12 +3237,16 @@ class LunaGameState : public Luna<GameState> {
     }
 
     StyleType st = pStyle->m_StyleType;
-    if (p->GetNumSidesJoined() == 2 && (st == StyleType_OnePlayerOneSide ||
+    if (p->GetNumSidesJoined() >= 2 && (st == StyleType_OnePlayerOneSide ||
                                         st == StyleType_OnePlayerTwoSides)) {
       luaL_error(L, "Too many sides joined for style %s", pStyle->m_szName);
     } else if (
+        p->GetNumSidesJoined() < 4 && st == StyleType_FourPlayersFourSides) {
+      luaL_error(L, "Too few sides joined for style %s", pStyle->m_szName);
+    } else if (
         p->GetNumSidesJoined() == 1 &&
         (st == StyleType_TwoPlayersTwoSides ||
+         st == StyleType_FourPlayersFourSides ||
          st == StyleType_TwoPlayersSharedSides)) {
       luaL_error(L, "Too few sides joined for style %s", pStyle->m_szName);
     }
