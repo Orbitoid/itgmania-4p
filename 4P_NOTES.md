@@ -56,6 +56,9 @@ Theme: because Simply Love is a submodule (110 MB), the 4P theme is an **overlay
 Screenshot looked at: docs/screenshots/02-quad-gameplay-4-difficulties.png — FOUR note fields side by side, one per quarter of the 1280x720 screen, miss counters 22/43/85/27 (different charts per player = different note density), MISS judgments in each quarter. Not yet right: scores/life bars/profile names/step-info not laid out for 4P; combo/judgment overlap not addressed (stage 4); one SL Lua error `ScreenGameplay underlay/PerPlayer/StepStatistics/default.lua:19`.
 Known engine gaps: 3-player join (only 4 sides join quad; no 3P style), ScreenSelect* navigation for P3/P4 untested, profiles for P3/P4 (ProfileSlot enums) untested, evaluation untested, save-format unchanged so far, Lua/`PlayerNumber` loops in the base theme are still 2-wide.
 
+Default build check (run 1): `-DITG_MAX_PLAYERS=2` compiles and 2P versus autostart runs with base theme (docs/screenshots/02b-default-build-2p-versus-still-works.png, looked at: two fields, MISS counters 33/97 for Easy/Hard).
+Build status at end of run 1: both ITG_MAX_PLAYERS=2 and =4 compile; switching the flag rebuilds ~everything (~6 min).
+
 ## Next
 0. FIRST next run: `git submodule update --init --recursive --depth 1`, apt deps (above), cmake with -DITG_MAX_PLAYERS=4, then `tools/visual-test.sh`.
 1. Stage 2 rest: StageStats/eval for 4 players (ScreenEvaluation with P3/P4), life bar / score per player, profile slots P3/P4, join via menus (ScreenSelectStyle "quad"), verify default (ITG_MAX_PLAYERS=2) build still plays 2P.
