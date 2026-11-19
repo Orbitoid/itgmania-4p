@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 1: stage 0 done, stage 1 audit done, stage 2 engine mostly working: 4 fields render in gameplay)
+STATUS: IN PROGRESS (run 2: stage 3 input verified; stage 2 rest + stage 4 theme + 5/6 remain)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -65,3 +65,12 @@ Build status at end of run 1: both ITG_MAX_PLAYERS=2 and =4 compile; switching t
 2. Stage 3: input verification per player with xdotool keys (q/w/e/r etc.), log judgments.
 3. Stage 4: SL overlay layout for 4 (judgment/combo scale 0.6, score/life per quarter, distinct P1-P4 colours).
 4. Stages 5-6 tests + docs/4-player.md.
+
+## Run 2
+- Fresh container needed full setup again (apt deps, `git submodule update --init --recursive --depth 1`, cmake build ~8 min on 4 cores). NOTE: on a fresh checkout Save/Preferences.ini does not exist until the game has run once; `tools/visual-test.sh` handles that by launching once, but `tools/input-test.sh` needs it to exist already (run visual-test.sh first). If Theme pref is unset, the base theme lacks P3/P4 metrics and the game dies on missing `ScreenGameplay::OniGameOverP3X` etc.
+- Added env-guarded `ITG_TEST_LOG=1` -> Player::SetJudgment logs `TESTJUDGE P<n> <TapNoteScore>`.
+- Added `tools/input-test.sh`: mashes each player's 4 keys in turn during quad gameplay and asserts non-Miss judgments appear only for that player. RESULT: **PASS** (P1=13, P2=29, P3=56, P4=83 hits, zero cross-talk). Keys verified with real xdotool (XTest) events: P1 q w e r, P2 t y u i, P3 o p [ ], P4 a s d f.
+- Screenshot looked at: docs/screenshots/03-input-p3-mashing.png (4 fields in own quarters; scores/judgment text are in wrong positions - stage 4; P4 score overlaps arrows).
+- STAGE 3 DONE (for keyboard; real dance pads UNVERIFIED).
+## Next (run 3)
+Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluation with 4 players, then tests (stage 5) and docs/4-player.md (stage 6).

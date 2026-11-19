@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Player.h"
 
 #include <algorithm>
@@ -3508,6 +3509,11 @@ void Player::SetMineJudgment(TapNoteScore tns, int iTrack) {
 void Player::SetJudgment(
     int iRow, int iTrack, const TapNote& tn, TapNoteScore tns,
     float fTapNoteOffset) {
+  if (std::getenv("ITG_TEST_LOG") != nullptr) {
+    LOG->Info(
+        "TESTJUDGE P%d %s", (int)m_pPlayerState->m_PlayerNumber + 1,
+        TapNoteScoreToString(tns).c_str());
+  }
   if (m_bSendJudgmentAndComboMessages) {
     Message msg("Judgment");
     msg.SetParam("Player", m_pPlayerState->m_PlayerNumber);
