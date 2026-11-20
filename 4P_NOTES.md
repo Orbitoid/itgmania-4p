@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 2: stage 3 input verified; stage 2 rest + stage 4 theme + 5/6 remain)
+STATUS: IN PROGRESS (run 3: stage 4 gameplay layout done+verified; select-music/evaluation 4P layout, stage 5 tests, stage 6 docs remain)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -74,3 +74,21 @@ Build status at end of run 1: both ITG_MAX_PLAYERS=2 and =4 compile; switching t
 - STAGE 3 DONE (for keyboard; real dance pads UNVERIFIED).
 ## Next (run 3)
 Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluation with 4 players, then tests (stage 5) and docs/4-player.md (stage 6).
+
+## Run 3 (stage 4 gameplay theme)
+- Fresh container again: setup = submodules + apt deps + `cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DITG_MAX_PLAYERS=4` (~10 min build on 4 cores). `tools/visual-lib.sh` `vt_stop` fixed (pkill returned 1 under `set -e`, which silently killed visual-test.sh).
+- When grepping Logs/log.txt for Lua problems use `grep -i "runtime error\|Error playing\|Error running"` (a plain "lua error" misses them).
+- NOTE: Simply Love coordinates are 854x480 (screen px = x1.5 at 1280x720).
+- 4P overlay theme additions (`Themes/Simply Love 4P`):
+  - `BGAnimations/ScreenGameplay underlay/default.lua`: for quad style: forces Mini 25% on all four players (fields ~260px of a 320px quarter), BackgroundFilter, header, NoteField helpers only; non-quad styles defer to base SL.
+  - `BGAnimations/ScreenGameplay overlay/default.lua`: base overlay + per-quarter HUD (life bar, difficulty-meter box, score, profile name) in four colours; drawn above arrows.
+  - `Graphics/Player judgment.lua` (zoom 0.6 wrapper), `Graphics/Player combo.lua` (zoom 0.6, number above COMBO/MISSES label, centred); metrics `ComboUnderField=false`.
+  - `Scripts/ZZ-4P.lua`: P1-P4 colours cyan/amber/green/magenta, `IsQuadStyle()`, `GetNotefieldWidth` and `GameplayMargins` for quad.
+- Test hook (env-guarded): `ITG_TEST_FAKECOMBO="12,123,1234,12345"` forces each player's combo + a W1 judgment every frame. `tools/visual-combo.sh` runs it.
+- Screenshot looked at: docs/screenshots/04-quad-theme-live-combos.png: four fields in four quarters, FANTASTIC judgment at ~0.6 zoom + stacked combo 12/123/1234/12345 + COMBO label each inside its own quarter, no overlap between players; score/name/difficulty box per quarter in distinct bright colours. Caveats: the 100/1000 combo milestone flash (large glow) appears because the hook re-crosses milestones every frame (test artefact); arrows scroll over the header HUD (same as stock SL); life bars show empty because the test song misses everything.
+- Screenshot looked at: docs/screenshots/04b-quad-selectmusic-NOT-YET-LAID-OUT.png: ScreenSelectMusic with 4 players is a broken mess (wheel duplicated, difficulty panels/steps overlap). Evaluation with 4 players NOT yet tried.
+- Known: `TrackFailTime.lua:121` Lua warning with 4P (SL[pn].Streams empty for P3/P4; harmless so far). Missing theme elements `MemoryCardDisplay * p3/p4` dialogs (log only).
+## Next (run 4)
+1. SL ScreenSelectMusic 4P layout (overlay-theme override: four compact per-quarter step/difficulty panels, single wheel) and ScreenEvaluation 4P (four score panes), screenshots.
+2. Stage 2 leftovers: profile slots P3/P4, 3-player join, real menu join path (ScreenSelectStyle "quad").
+3. Stage 5 unit tests + smoke test via tools/visual-test.sh (tools/input-test.sh already passes); stage 6 docs/4-player.md.
