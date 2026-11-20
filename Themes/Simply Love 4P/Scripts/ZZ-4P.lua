@@ -43,3 +43,37 @@ do
 	end
 	InitializeSimplyLove()
 end
+
+-- Four clearly distinct, bright player colours (P3/P4 would otherwise be white / near-black).
+local quad_colors = {
+	["PlayerNumber_P1"] = color("#2EC8FF"), -- cyan
+	["PlayerNumber_P2"] = color("#FFB020"), -- amber
+	["PlayerNumber_P3"] = color("#4CFF5C"), -- green
+	["PlayerNumber_P4"] = color("#FF4CD8"), -- magenta
+}
+local orig_PlayerColor = PlayerColor
+function PlayerColor(pn, decorative)
+	if GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_FourPlayersFourSides" and quad_colors[pn] then
+		return quad_colors[pn]
+	end
+	return orig_PlayerColor(pn, decorative)
+end
+
+function IsQuadStyle()
+	local s = GAMESTATE:GetCurrentStyle()
+	return s ~= nil and s:GetStyleType() == "StyleType_FourPlayersFourSides"
+end
+
+-- Notefield width for the quad style (the base table has no 'quad' entry).
+local orig_GetNotefieldWidth = GetNotefieldWidth
+function GetNotefieldWidth()
+	if IsQuadStyle() then return 256 end
+	return orig_GetNotefieldWidth()
+end
+
+-- The stock margin function only knows P1/P2; the quad style positions fields from metrics.
+local orig_GameplayMargins = GameplayMargins
+function GameplayMargins(enabled_players, styletype)
+	if styletype == "StyleType_FourPlayersFourSides" then return 40, 80, 40 end
+	return orig_GameplayMargins(enabled_players, styletype)
+end

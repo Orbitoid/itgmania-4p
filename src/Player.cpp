@@ -920,6 +920,26 @@ void Player::Update(float fDeltaTime) {
 
   ActorFrame::Update(fDeltaTime);
 
+  // Test hook: ITG_TEST_FAKECOMBO="12,123,1234,99" forces each player's combo
+  // and shows a W1 judgment (for layout screenshots). Env-guarded only.
+  if (const char* fc = std::getenv("ITG_TEST_FAKECOMBO")) {
+    static float s_fFakeTimer[NUM_PLAYERS] = {};
+    PlayerNumber fpn = m_pPlayerState->m_PlayerNumber;
+    s_fFakeTimer[fpn] += fDeltaTime;
+    if (s_fFakeTimer[fpn] > 4.0f && m_pPlayerStageStats != nullptr) {
+      s_fFakeTimer[fpn] = 4.0f;
+      std::vector<std::string> v;
+      split(fc, ",", v);
+      if ((size_t)fpn < v.size()) {
+        unsigned n = (unsigned)atoi(v[fpn].c_str());
+        m_pPlayerStageStats->m_iCurCombo = n;
+        m_pPlayerStageStats->m_iCurMissCombo = 0;
+        SetCombo(n, 0);
+        SetJudgment(0, 0, TAP_EMPTY, TNS_W1, 0.0f);
+      }
+    }
+  }
+
   if (m_pPlayerState->m_mp != MultiPlayer_Invalid) {
     /* In multiplayer, it takes too long to run player updates for every player
      * each frame; with 32 players and three difficulties, we have 96 Players to
