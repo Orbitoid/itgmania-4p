@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 3: stage 4 gameplay layout done+verified; select-music/evaluation 4P layout, stage 5 tests, stage 6 docs remain)
+STATUS: IN PROGRESS (run 4: select-music + evaluation 4P layouts done+verified, stage 5 self-test (57 checks) + docs written; remaining: 3-player join, profile slots P3/P4, real menu join path, final polish)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -92,3 +92,15 @@ Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluatio
 1. SL ScreenSelectMusic 4P layout (overlay-theme override: four compact per-quarter step/difficulty panels, single wheel) and ScreenEvaluation 4P (four score panes), screenshots.
 2. Stage 2 leftovers: profile slots P3/P4, 3-player join, real menu join path (ScreenSelectStyle "quad").
 3. Stage 5 unit tests + smoke test via tools/visual-test.sh (tools/input-test.sh already passes); stage 6 docs/4-player.md.
+
+## Run 4
+- Fresh container again: setup script = apt deps + submodules + cmake -DITG_MAX_PLAYERS=4 (~10 min). Binary built OK.
+- Stage 5: `ITG_TEST_SELFTEST=1` in-engine unit tests (ScreenTitleMenu::FourPlayerSelfTest): NUM_PLAYERS==NUM_GameController, OPPOSITE_PLAYER involution, quad style type/cols/steps type, input<->column round trip per player, one distinct controller per player, per-player StageStats::AddStats aggregation. `tools/selftest.sh` -> **57 passed, 0 failed** (4P build). `tools/visual-test.sh 25 --all` runs gameplay shot + selftest + input-test (input-test PASSED in run 2; not re-run this run).
+- ITG_MAX_PLAYERS=2 compile of ScreenTitleMenu.cpp checked (syntax only; full 2P rebuild not repeated this run).
+- Select Music (quad): `Themes/Simply Love 4P/BGAnimations/ScreenSelectMusic overlay/default.lua` — banner + song info top-left, 2x2 per-player panels (colour border, difficulty name, big meter, steps/jumps/holds); base pane/difficulty list/density graphs skipped for quad. Screenshot looked at: docs/screenshots/05-quad-selectmusic.png (clean, no overlap; P1..P4 = Beginner1/Easy3/Medium6/Hard9). Wheel on the right is stock SL. Changing difficulty with P3/P4 in this screen NOT exercised (shown via autostart hook only).
+- Evaluation (quad): `ScreenEvaluationStage overlay.lua` — four coloured columns: player, difficulty, percent, cleared/failed, W1..Miss counts, max combo. Reached by real play (keys q w e r / o p [ ] mashed, P2/P4 left idle). Screenshot looked at: docs/screenshots/06-quad-evaluation.png (distinct per-player numbers, no overlap). Percent shows 0.00 on failed players (SL behaviour). Summary/NameEntry screens not laid out.
+- Known harmless: `TrackFailTime.lua:121` warning, `Expected ProfileSlot; got nil` on select music (profile slots P3/P4 not wired).
+## Next (run 5)
+1. Profile slots P3/P4 (ProfileSlot enum, ProfileManager, `Expected ProfileSlot; got nil`), 3-player join, join via menus (ScreenSelectStyle "quad") instead of autostart hook.
+2. Verify real 4-key difficulty change on select music with P3/P4 keys; re-run tools/input-test.sh; rebuild ITG_MAX_PLAYERS=2 and confirm 2P play.
+3. Final docs pass; then set STATUS: COMPLETE.

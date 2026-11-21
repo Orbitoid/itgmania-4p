@@ -33,15 +33,15 @@ for i, player in ipairs(PlayerNumber) do
 		pf[#pf+1] = Def.Quad{ InitCommand=function(self) self:xy(0, 250):zoomto(w+4, 330):diffuse(col) end }
 		pf[#pf+1] = Def.Quad{ InitCommand=function(self) self:xy(0, 250):zoomto(w, 326):diffuse(0.04,0.04,0.07,0.95) end }
 		pf[#pf+1] = Def.BitmapText{ Font="Common Bold", InitCommand=function(self)
-			self:xy(0, 108):zoom(1.0):diffuse(col):settext("PLAYER "..i) end }
+			self:xy(0, 110):zoom(0.45):diffuse(col):settext("PLAYER "..i) end }
 		if steps then
 			pf[#pf+1] = Def.BitmapText{ Font="Common Normal", InitCommand=function(self)
-				self:xy(0, 130):zoom(0.9):diffuse(DifficultyColor(steps:GetDifficulty()))
+				self:xy(0, 136):zoom(0.9):diffuse(DifficultyColor(steps:GetDifficulty()))
 				  :settext(THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())) .. "  " .. steps:GetMeter())
 			end }
 		end
 		pf[#pf+1] = Def.BitmapText{ Font="Wendy/_wendy white", InitCommand=function(self)
-			self:xy(0, 178):zoom(0.7):diffuse(col):settext(string.format("%.2f%%", pss:GetPercentDancePoints() * 100)) end }
+			self:xy(0, 176):zoom(0.55):diffuse(col):settext(string.format("%.2f%%", pss:GetPercentDancePoints() * 100)) end }
 		local failed = pss:GetFailed()
 		pf[#pf+1] = Def.BitmapText{ Font="Common Normal", InitCommand=function(self)
 			self:xy(0, 208):zoom(0.9):settext(failed and "FAILED" or "CLEARED"):diffuse(failed and color("#FF3030") or color("#4CFF5C")) end }

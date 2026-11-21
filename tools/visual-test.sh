@@ -14,3 +14,7 @@ vt_start
 sleep "${1:-20}"
 vt_shot quad-gameplay
 vt_stop
+# Optional: run the full suite (unit self-test + scripted per-player input smoke test)
+if [ "$2" = "--all" ]; then
+  "$REPO/tools/selftest.sh" && "$REPO/tools/input-test.sh"
+fi
