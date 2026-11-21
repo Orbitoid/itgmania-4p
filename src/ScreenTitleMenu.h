@@ -13,6 +13,7 @@ class ScreenTitleMenu : public ScreenSelectMaster {
   virtual void Init();
   virtual void Update(float fDeltaTime);
   void TestAutostart();
+  void FourPlayerSelfTest();
   float m_fTestAutostartTimer = 0;
   bool m_bTestAutostartDone = false;
 

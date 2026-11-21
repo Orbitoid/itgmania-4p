@@ -27,6 +27,11 @@
 #include "Steps.h"
 #include "Style.h"
 #include <cstdlib>
+#include <set>
+#include <vector>
+#include "StageStats.h"
+#include "PlayerStageStats.h"
+#include "GameInput.h"
 
 #define COIN_MODE_CHANGE_SCREEN \
   THEME->GetMetric(m_sName, "CoinModeChangeScreen")
@@ -53,12 +58,104 @@ void ScreenTitleMenu::Init() {
 
 void ScreenTitleMenu::Update(float fDeltaTime) {
   ScreenSelectMaster::Update(fDeltaTime);
-  if (!m_bTestAutostartDone && std::getenv("ITG_TEST_AUTOSTART") != nullptr) {
+  if (!m_bTestAutostartDone &&
+      (std::getenv("ITG_TEST_AUTOSTART") != nullptr ||
+       std::getenv("ITG_TEST_SELFTEST") != nullptr)) {
     m_fTestAutostartTimer += fDeltaTime;
     if (m_fTestAutostartTimer > 2.0f) {
       m_bTestAutostartDone = true;
+      if (std::getenv("ITG_TEST_SELFTEST") != nullptr) {
+        FourPlayerSelfTest();
+      }
       TestAutostart();
     }
+  }
+}
+
+/* In-engine unit tests for player-count dependent logic (style tables, input
+ * mapping, stage-stat aggregation). Run with ITG_TEST_SELFTEST=1; results are
+ * logged as "SELFTEST PASS/FAIL ..." lines, and the process exits afterwards
+ * unless ITG_TEST_AUTOSTART is also set. */
+static int g_iSelfTestFailures = 0;
+#define ST_CHECK(cond)                                                      \
+  do {                                                                      \
+    if (cond) {                                                             \
+      LOG->Info("SELFTEST PASS %s", #cond);                                 \
+    } else {                                                                \
+      LOG->Warn("SELFTEST FAIL %s (line %d)", #cond, __LINE__);             \
+      ++g_iSelfTestFailures;                                                \
+    }                                                                       \
+  } while (0)
+
+void ScreenTitleMenu::FourPlayerSelfTest() {
+  g_iSelfTestFailures = 0;
+  LOG->Info("SELFTEST begin, NUM_PLAYERS=%d NUM_GameController=%d",
+      (int)NUM_PLAYERS, (int)NUM_GameController);
+  ST_CHECK((int)NUM_PLAYERS == (int)NUM_GameController);
+  ST_CHECK((int)NUM_PLAYERS == 2 || (int)NUM_PLAYERS == 4);
+  for (int i = 0; i < (int)NUM_PLAYERS; ++i) {
+    PlayerNumber pn = (PlayerNumber)i;
+    ST_CHECK(OPPOSITE_PLAYER[i] != pn);
+    ST_CHECK(OPPOSITE_PLAYER[OPPOSITE_PLAYER[i]] == pn);
+  }
+  // Style table: every style's input<->column mapping must round-trip.
+  const Style* quad = GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame, "quad");
+  const Style* versus = GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame, "versus");
+  const Style* single = GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame, "single");
+  ST_CHECK(versus != nullptr && single != nullptr);
+  if (versus != nullptr) {
+    ST_CHECK(versus->m_StyleType == StyleType_TwoPlayersTwoSides);
+  }
+#if ITG_MAX_PLAYERS >= 4
+  ST_CHECK(quad != nullptr);
+  if (quad != nullptr) {
+    ST_CHECK(quad->m_StyleType == StyleType_FourPlayersFourSides);
+    ST_CHECK(quad->m_iColsPerPlayer == 4);
+    ST_CHECK(single != nullptr && quad->m_StepsType == single->m_StepsType);
+    std::set<int> controllers;
+    for (int p = 0; p < 4; ++p) {
+      std::set<GameController> pc;
+      for (int c = 0; c < quad->m_iColsPerPlayer; ++c) {
+        std::vector<GameInput> gi;
+        quad->StyleInputToGameInput(c, (PlayerNumber)p, gi);
+        ST_CHECK(!gi.empty());
+        for (const GameInput& g : gi) {
+          pc.insert(g.controller);
+          // round trip: input maps back to the same column
+          ST_CHECK(quad->GameInputToColumn(g) == c);
+        }
+      }
+      // each player uses exactly one controller, distinct per player
+      ST_CHECK(pc.size() == 1);
+      if (pc.size() == 1) {
+        controllers.insert((int)*pc.begin());
+      }
+    }
+    ST_CHECK(controllers.size() == 4);
+    // Columns are laid out on distinct tracks per player
+    for (int p = 0; p < 4; ++p) {
+      float lo, hi;
+      quad->GetMinAndMaxColX((PlayerNumber)p, lo, hi);
+      ST_CHECK(lo < hi);
+    }
+  }
+#endif
+  // Stage stats aggregation is independent per player.
+  {
+    StageStats a, b;
+    for (int i = 0; i < (int)NUM_PLAYERS; ++i) {
+      a.m_player[i].m_iTapNoteScores[TNS_W1] = 10 * (i + 1);
+      b.m_player[i].m_iTapNoteScores[TNS_W1] = i + 1;
+    }
+    a.AddStats(b);
+    for (int i = 0; i < (int)NUM_PLAYERS; ++i) {
+      ST_CHECK(a.m_player[i].m_iTapNoteScores[TNS_W1] == 11 * (i + 1));
+    }
+  }
+  LOG->Info("SELFTEST DONE failures=%d", g_iSelfTestFailures);
+  if (std::getenv("ITG_TEST_AUTOSTART") == nullptr) {
+    LOG->Flush();
+    std::exit(g_iSelfTestFailures == 0 ? 0 : 1);
   }
 }
 
