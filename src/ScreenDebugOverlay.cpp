@@ -902,6 +902,12 @@ class DebugLineProfileSlot : public IDebugLine {
         return "Player 1";
       case ProfileSlot_Player2:
         return "Player 2";
+#if ITG_MAX_PLAYERS >= 4
+      case ProfileSlot_Player3:
+        return "Player 3";
+      case ProfileSlot_Player4:
+        return "Player 4";
+#endif
       default:
         return std::string();
     }

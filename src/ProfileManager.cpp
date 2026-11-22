@@ -975,6 +975,10 @@ const std::string& ProfileManager::GetProfileDir(ProfileSlot slot) const {
   switch (slot) {
     case ProfileSlot_Player1:
     case ProfileSlot_Player2:
+#if ITG_MAX_PLAYERS >= 4
+    case ProfileSlot_Player3:
+    case ProfileSlot_Player4:
+#endif
       return m_sProfileDir[slot];
     case ProfileSlot_Machine:
       return MACHINE_PROFILE_DIR;
@@ -987,6 +991,10 @@ std::string ProfileManager::GetProfileDirImportedFrom(ProfileSlot slot) const {
   switch (slot) {
     case ProfileSlot_Player1:
     case ProfileSlot_Player2:
+#if ITG_MAX_PLAYERS >= 4
+    case ProfileSlot_Player3:
+    case ProfileSlot_Player4:
+#endif
       return m_sProfileDirImportedFrom[slot];
     case ProfileSlot_Machine:
       return std::string();
@@ -999,6 +1007,10 @@ const Profile* ProfileManager::GetProfile(ProfileSlot slot) const {
   switch (slot) {
     case ProfileSlot_Player1:
     case ProfileSlot_Player2:
+#if ITG_MAX_PLAYERS >= 4
+    case ProfileSlot_Player3:
+    case ProfileSlot_Player4:
+#endif
       return GetProfile((PlayerNumber)slot);
     case ProfileSlot_Machine:
       return m_pMachineProfile;
@@ -1315,6 +1327,10 @@ bool ProfileManager::IsPersistentProfile(ProfileSlot slot) const {
   switch (slot) {
     case ProfileSlot_Player1:
     case ProfileSlot_Player2:
+#if ITG_MAX_PLAYERS >= 4
+    case ProfileSlot_Player3:
+    case ProfileSlot_Player4:
+#endif
       return GAMESTATE->IsHumanPlayer((PlayerNumber)slot) &&
              !m_sProfileDir[slot].empty();
     case ProfileSlot_Machine:

@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "EnumHelper.h"
+#include "PlayerNumber.h"
 
 // Note definitions
 /** @brief Define the mininum difficulty value allowed. */
@@ -339,6 +340,10 @@ LuaDeclareType(TapNoteScoreJudgeType);
 enum ProfileSlot {
   ProfileSlot_Player1,
   ProfileSlot_Player2,
+#if ITG_MAX_PLAYERS >= 4
+  ProfileSlot_Player3,
+  ProfileSlot_Player4,
+#endif
   ProfileSlot_Machine,
   NUM_ProfileSlot,
   ProfileSlot_Invalid

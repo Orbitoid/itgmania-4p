@@ -1656,7 +1656,9 @@ void GameManager::GetCompatibleStyles(
         break;
     }
 
-    if (iNumPlayers != iNumPlayersRequired) {
+    // Quad style can be played with 3 or 4 players.
+    if (iNumPlayers != iNumPlayersRequired &&
+        !(styleType == StyleType_FourPlayersFourSides && iNumPlayers == 3)) {
       continue;
     }
 

@@ -278,6 +278,10 @@ LuaXType(TapNoteScoreJudgeType);
 static const char* ProfileSlotNames[] = {
     "Player1",
     "Player2",
+#if ITG_MAX_PLAYERS >= 4
+    "Player3",
+    "Player4",
+#endif
     "Machine",
 };
 XToString(ProfileSlot);

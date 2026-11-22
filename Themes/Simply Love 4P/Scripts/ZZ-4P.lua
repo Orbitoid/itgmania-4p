@@ -77,3 +77,17 @@ function GameplayMargins(enabled_players, styletype)
 	if styletype == "StyleType_FourPlayersFourSides" then return 40, 80, 40 end
 	return orig_GameplayMargins(enabled_players, styletype)
 end
+
+-- Menu path into quad: if three or more sides have joined (Start on each
+-- player's controller at the title screen), skip the single/versus/double
+-- choice and go straight to the "quad" style.
+if Branch and Branch.AfterScreenSelectColor and #PlayerNumber > 2 then
+	local orig_AfterScreenSelectColor = Branch.AfterScreenSelectColor
+	Branch.AfterScreenSelectColor = function()
+		if GAMESTATE:GetNumSidesJoined() >= 3 then
+			GAMESTATE:SetCurrentStyle("quad")
+			return Branch.AllowScreenSelectPlayMode()
+		end
+		return orig_AfterScreenSelectColor()
+	end
+end

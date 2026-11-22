@@ -730,7 +730,11 @@ void GameCommand::ApplySelf(const std::vector<PlayerNumber>& vpns) const {
         GAMESTATE->JoinPlayer(PLAYER_2);
       } break;
       case StyleType_FourPlayersFourSides: {
-        FOREACH_PlayerNumber(p) GAMESTATE->JoinPlayer(p);
+        // 3 or 4 players may play quad; only auto-join everyone when fewer
+        // than 3 sides have joined already.
+        if (GAMESTATE->GetNumSidesJoined() < 3) {
+          FOREACH_PlayerNumber(p) GAMESTATE->JoinPlayer(p);
+        }
       } break;
       default:
         LuaHelpers::ReportScriptErrorFmt(

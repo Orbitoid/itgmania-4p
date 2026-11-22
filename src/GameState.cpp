@@ -1645,7 +1645,7 @@ bool GameState::IsHumanPlayer(PlayerNumber pn) const {
         case StyleType_TwoPlayersSharedSides:
           return pn == PLAYER_1 || pn == PLAYER_2;
         case StyleType_FourPlayersFourSides:
-          return true;
+          return m_bSideIsJoined[pn];
         case StyleType_OnePlayerOneSide:
         case StyleType_OnePlayerTwoSides:
           return pn == this->GetMasterPlayerNumber();
@@ -1666,7 +1666,7 @@ bool GameState::IsHumanPlayer(PlayerNumber pn) const {
     case StyleType_TwoPlayersSharedSides:
       return pn == PLAYER_1 || pn == PLAYER_2;
     case StyleType_FourPlayersFourSides:
-      return true;
+      return m_bSideIsJoined[pn];
     case StyleType_OnePlayerOneSide:
     case StyleType_OnePlayerTwoSides:
       return pn == this->GetMasterPlayerNumber();
@@ -3241,12 +3241,11 @@ class LunaGameState : public Luna<GameState> {
                                         st == StyleType_OnePlayerTwoSides)) {
       luaL_error(L, "Too many sides joined for style %s", pStyle->m_szName);
     } else if (
-        p->GetNumSidesJoined() < 4 && st == StyleType_FourPlayersFourSides) {
+        p->GetNumSidesJoined() < 3 && st == StyleType_FourPlayersFourSides) {
       luaL_error(L, "Too few sides joined for style %s", pStyle->m_szName);
     } else if (
         p->GetNumSidesJoined() == 1 &&
         (st == StyleType_TwoPlayersTwoSides ||
-         st == StyleType_FourPlayersFourSides ||
          st == StyleType_TwoPlayersSharedSides)) {
       luaL_error(L, "Too few sides joined for style %s", pStyle->m_szName);
     }
