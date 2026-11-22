@@ -432,8 +432,8 @@ static std::string GetSSCNoteData(
   }
 
   std::vector<std::string> asRadarValues;
-  FOREACH_PlayerNumber(pn) {
-    const RadarValues& rv = in.GetRadarValues(pn);
+  for (int pn = 0; pn < NUM_FILE_PLAYERS; ++pn) {
+    const RadarValues& rv = in.GetRadarValues((PlayerNumber)pn);
     FOREACH_ENUM(RadarCategory, rc)
     asRadarValues.push_back(ssprintf("%.6f", rv[rc]));
   }
@@ -489,8 +489,8 @@ static std::string GetSSCNoteData(
     lines.push_back(ssprintf("// step cache tags:"));
 
     std::vector<std::string> asTechCounts;
-    FOREACH_PlayerNumber(pn) {
-      const TechCounts& ts = in.GetTechCounts(pn);
+    for (int pn = 0; pn < NUM_FILE_PLAYERS; ++pn) {
+      const TechCounts& ts = in.GetTechCounts((PlayerNumber)pn);
       FOREACH_ENUM(TechCountsCategory, tc) {
         asTechCounts.push_back(ssprintf("%.6f", ts[tc]));
       }

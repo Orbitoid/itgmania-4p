@@ -249,8 +249,8 @@ static std::string GetSMNotesTag(const Song& song, const Steps& in) {
   std::vector<std::string> asRadarValues;
   // OpenITG simfiles use 11 radar categories.
   int categories = 11;
-  FOREACH_PlayerNumber(pn) {
-    const RadarValues& rv = in.GetRadarValues(pn);
+  for (int pn = 0; pn < NUM_FILE_PLAYERS; ++pn) {
+    const RadarValues& rv = in.GetRadarValues((PlayerNumber)pn);
     // Can't use the foreach anymore due to flexible radar lines.
     for (RadarCategory rc = (RadarCategory)0; rc < categories;
          enum_add<RadarCategory>(rc, 1)) {

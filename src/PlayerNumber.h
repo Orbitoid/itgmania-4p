@@ -26,6 +26,10 @@ enum PlayerNumber {
   NUM_PlayerNumber,  // leave this at the end
   PlayerNumber_Invalid
 };
+/** Number of per-player sections written to simfile caches (radar values, tech
+ * counts). Fixed at 2 so cache/simfile data is identical for every build
+ * (ITG_MAX_PLAYERS) and never overruns arrays when read by another build. */
+const int NUM_FILE_PLAYERS = 2;
 const PlayerNumber NUM_PLAYERS = NUM_PlayerNumber;
 const PlayerNumber PLAYER_INVALID = PlayerNumber_Invalid;
 const std::string& PlayerNumberToString(PlayerNumber pn);

@@ -327,12 +327,18 @@ void SetRadarValues(StepsTagInfo& info) {
     // Instead of trying to use the version to figure out how many
     // categories to expect, look at the number of values and split them
     // evenly. -Kyz
-    size_t cats_per_player = values.size() / NUM_PlayerNumber;
+    size_t cats_per_player = values.size() / NUM_FILE_PLAYERS;
     RadarValues v[NUM_PLAYERS];
-    FOREACH_PlayerNumber(pn) {
-      for (size_t i = 0; i < cats_per_player; ++i) {
-        v[pn][i] = StringToFloat(values[pn * cats_per_player + i]);
+    for (size_t pn = 0; pn < (size_t)NUM_FILE_PLAYERS; ++pn) {
+      for (size_t i = 0; i < cats_per_player && i < NUM_RadarCategory; ++i) {
+        if (pn < (size_t)NUM_PLAYERS) {
+          v[pn][i] = StringToFloat(values[pn * cats_per_player + i]);
+        }
       }
+    }
+    // Players beyond what the file stores share player 1's values.
+    for (size_t pn = NUM_FILE_PLAYERS; pn < (size_t)NUM_PLAYERS; ++pn) {
+      v[pn] = v[0];
     }
     info.steps->SetRadarValues(v);
   } else {
@@ -345,12 +351,19 @@ void SetTechCounts(StepsTagInfo& info) {
   if (info.from_cache || info.for_load_edit) {
     std::vector<std::string> values;
     split((*info.params)[1], ",", values, true);
-    std::size_t cats_per_player = values.size() / NUM_PlayerNumber;
+    std::size_t cats_per_player = values.size() / NUM_FILE_PLAYERS;
     TechCounts v[NUM_PLAYERS];
-    FOREACH_PlayerNumber(pn) {
-      for (std::size_t i = 0; i < cats_per_player; ++i) {
-        v[pn][i] = StringToFloat(values[pn * cats_per_player + i]);
+    for (std::size_t pn = 0; pn < (std::size_t)NUM_FILE_PLAYERS; ++pn) {
+      for (std::size_t i = 0; i < cats_per_player && i < NUM_TechCountsCategory;
+           ++i) {
+        if (pn < (std::size_t)NUM_PLAYERS) {
+          v[pn][i] = StringToFloat(values[pn * cats_per_player + i]);
+        }
       }
+    }
+    for (std::size_t pn = NUM_FILE_PLAYERS; pn < (std::size_t)NUM_PLAYERS;
+         ++pn) {
+      v[pn] = v[0];
     }
     info.steps->SetTechCounts(v);
   } else {

@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 4: select-music + evaluation 4P layouts done+verified, stage 5 self-test (57 checks) + docs written; remaining: 3-player join, profile slots P3/P4, real menu join path, final polish)
+STATUS: IN PROGRESS (run 5: profile slots P3/P4, 3-player quad, title-screen join path, cache-format fix done; remaining: P3/P4 difficulty change on select music, centre fields for 3P, options/summary/name-entry screens, final docs pass)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -104,3 +104,15 @@ Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluatio
 1. Profile slots P3/P4 (ProfileSlot enum, ProfileManager, `Expected ProfileSlot; got nil`), 3-player join, join via menus (ScreenSelectStyle "quad") instead of autostart hook.
 2. Verify real 4-key difficulty change on select music with P3/P4 keys; re-run tools/input-test.sh; rebuild ITG_MAX_PLAYERS=2 and confirm 2P play.
 3. Final docs pass; then set STATUS: COMPLETE.
+
+## Run 5
+- Fresh container: `apt-get update` is REQUIRED before the apt install (first attempt failed silently). Then submodules + `cmake -B build -G Ninja -DITG_MAX_PLAYERS=4` (~8 min). A second 2P build dir `build2` (git-ignored) is used for the default-build check; NOTE both build dirs link to `./itgmania` at the repo root, so after running ninja in build2 re-run `ninja -C build` before 4P tests.
+- ProfileSlot enum now has Player3/Player4 before Machine in 4P builds (previously `(ProfileSlot)PLAYER_3` aliased Machine!). ProfileManager/ScreenDebugOverlay switches updated. (`MusicWheel` P2 popularity sort etc. left 2P.)
+- **Save/cache-format bug found and fixed**: simfile cache `#RADARVALUES`/`#TECHCOUNTS` were written per NUM_PLAYERS, so a 4P-build cache crashed (stack smash in `SetRadarValues`) a 2P build. Now fixed at `NUM_FILE_PLAYERS = 2` (PlayerNumber.h) in NotesWriterSSC/SM + NotesLoaderSSC; loaders fill P3/P4 from P1. Files are now byte-identical in layout across builds. (Delete `Cache/` after switching old builds.)
+- 3-player quad: `IsHumanPlayer` for quad returns joined-ness; quad style accepts 3 or 4 joined sides (GetCompatibleStyles, SetCurrentStyle check); GameCommand only auto-joins everyone if <3 joined. Screenshot looked at: docs/screenshots/07-quad-3-players.png (3 fields in quarters 1-3, quarter 4 empty - not centred, cosmetic).
+- Real menu join path: SL4P `Scripts/ZZ-4P.lua` wraps `Branch.AfterScreenSelectColor`: with >=3 sides joined at the title screen (Start keys: P1 Return, P2 KP_Enter, P3 `l`, P4 `g`) it sets style "quad" and skips single/versus/double. `tools/menu-join-test.sh` drives title -> select mode -> music -> gameplay with xdotool: PASS. Screenshot looked at: docs/screenshots/08-quad-via-real-menus.png (4 players, four quarters, own colours/life bars; all on same default difficulty).
+- Default 2P build (ITG_MAX_PLAYERS=2) compiled and ran after these changes: docs/screenshots/09-default-2p-build-after-run5.png (looked at: stock SL two-player gameplay, meters 3 and 9, MISS counters 32/95).
+- Tests this run (4P build): selftest 57/0, input-test PASS, menu-join-test PASS.
+## Next (run 6)
+1. Change difficulty with P3/P4 keys on select music (verify via screenshot); centre fields for 3 players; ScreenPlayerOptions / summary / name-entry for 4P (or skip them in quad); evaluation after real play with all 4 on different difficulties.
+2. Add a 3-player and menu-join check to `tools/visual-test.sh --all`; final docs/4-player.md pass; then STATUS: COMPLETE.
