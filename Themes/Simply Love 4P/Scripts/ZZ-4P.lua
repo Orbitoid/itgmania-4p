@@ -3,7 +3,9 @@
 -- Quarter-screen X centre for a player in 4-player mode.
 function Get4PQuarterX(pn)
 	local idx = tonumber(ToEnumShortString(pn):match("%d")) or 1
-	return _screen.w * (0.125 + 0.25 * (idx - 1))
+	local shift = 0
+	if GAMESTATE:GetNumSidesJoined() == 3 then shift = 0.125 end
+	return _screen.w * (0.125 + 0.25 * (idx - 1) + shift)
 end
 
 local orig_GetNotefieldX = GetNotefieldX

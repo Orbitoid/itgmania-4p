@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 5: profile slots P3/P4, 3-player quad, title-screen join path, cache-format fix done; remaining: P3/P4 difficulty change on select music, centre fields for 3P, options/summary/name-entry screens, final docs pass)
+STATUS: IN PROGRESS (run 6: 3P fields centred; remaining: P3/P4 difficulty change on select music, options/summary/name-entry screens, final docs pass)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -116,3 +116,11 @@ Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluatio
 ## Next (run 6)
 1. Change difficulty with P3/P4 keys on select music (verify via screenshot); centre fields for 3 players; ScreenPlayerOptions / summary / name-entry for 4P (or skip them in quad); evaluation after real play with all 4 on different difficulties.
 2. Add a 3-player and menu-join check to `tools/visual-test.sh --all`; final docs/4-player.md pass; then STATUS: COMPLETE.
+
+## Run 6
+- Fresh container, same setup (apt-get update + deps, submodules, cmake -DITG_MAX_PLAYERS=4, ~8 min with -j8) built OK.
+- With exactly 3 sides joined the quad fields are shifted half a quarter so the three fields are centred (src/ScreenGameplay.cpp + `Get4PQuarterX` in ZZ-4P.lua). Screenshot looked at: docs/screenshots/10-quad-3-players-centred.png (3 fields centred, HUD/judgments follow each field, no overlap).
+- Not re-run this run: selftest / input-test / menu-join-test (no engine logic changed beyond field offset).
+## Next (run 7)
+1. P3/P4 difficulty change on select music (screenshot), options/summary/name-entry in quad (or skip them), evaluation after real play at different difficulties.
+2. Add 3P check to `tools/visual-test.sh --all`; final docs/4-player.md pass; then STATUS: COMPLETE.

@@ -609,6 +609,12 @@ void ScreenGameplay::Init() {
     for (int i = 0; i < NUM_PLAYERS; ++i) {
       left_edge[i] = i * SCREEN_WIDTH / 4.0f;
     }
+    // With exactly three players joined, centre the three fields.
+    if (GAMESTATE->GetNumSidesJoined() == 3) {
+      for (int i = 0; i < NUM_PLAYERS; ++i) {
+        left_edge[i] += SCREEN_WIDTH / 8.0f;
+      }
+    }
   }
   FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
     std::string sName = ssprintf("Player%s", pi->GetName().c_str());
