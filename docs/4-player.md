@@ -38,3 +38,4 @@ screen quarter. Regenerate P3/P4 metrics with `python3 tools/gen-4p-metrics.py`.
 - Real dance pads and audio are UNVERIFIED (only keyboard under a dummy audio driver was tested).
 - Menu screens other than gameplay/select-music/evaluation are not laid out for 3-4 players.
 - Tug/Rave/battle modes remain 2-player only. Saved data formats are unchanged.
+- `tools/diff-change-test.sh`: per-player difficulty change on select music (see 4P_NOTES run 7).

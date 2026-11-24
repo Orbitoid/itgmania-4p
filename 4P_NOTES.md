@@ -1,4 +1,4 @@
-STATUS: IN PROGRESS (run 6: 3P fields centred; remaining: P3/P4 difficulty change on select music, options/summary/name-entry screens, final docs pass)
+STATUS: IN PROGRESS (run 7: per-player difficulty change verified; remaining: options/summary/name-entry screens in quad, final docs pass)
 
 # 4-player ITGmania — working notes (memory file; read first every run)
 
@@ -124,3 +124,12 @@ Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluatio
 ## Next (run 7)
 1. P3/P4 difficulty change on select music (screenshot), options/summary/name-entry in quad (or skip them), evaluation after real play at different difficulties.
 2. Add 3P check to `tools/visual-test.sh --all`; final docs/4-player.md pass; then STATUS: COMPLETE.
+
+## Run 7
+- Fresh container, same setup; 4P build OK (~8 min, -j6).
+- `tools/diff-change-test.sh` (also in `visual-test.sh --all`): on quad select music each player changes ONLY their own difficulty with their own Down key (P1 Down, P2 KP_2, P3 `p`, P4 `s`). Log shows `ChangeSteps(0..3, 1)` x1/2/3/4 -> Easy/Medium/Hard/Expert(Challenge). Screenshot looked at: docs/screenshots/11-quad-selectmusic-difficulty-per-player.png (P1 Easy 3, P2 Medium 6, P3 Hard 9, P4 Expert 12, own colours, no overlap).
+- Test-driving quirk: under llvmpipe a single `xdotool key` is often not seen by the game; send each key twice 0.5 s apart (`xdotool key --delay 500 K K`) and pause ~3 s between steps. In SL, Up = easier, Down = harder (MenuUp/MenuDown codes).
+- Not re-run: selftest / input-test / menu-join-test (no engine change this run).
+## Next (run 8)
+1. ScreenPlayerOptions / ScreenEvaluationSummary / ScreenNameEntry in quad (lay out or skip), evaluation after real play with 4 different difficulties.
+2. Final docs/4-player.md pass (mention diff-change-test), re-run `tools/visual-test.sh 25 --all`, then STATUS: COMPLETE.
