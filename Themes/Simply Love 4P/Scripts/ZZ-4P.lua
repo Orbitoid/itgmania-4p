@@ -93,3 +93,22 @@ if Branch and Branch.AfterScreenSelectColor and #PlayerNumber > 2 then
 		return orig_AfterScreenSelectColor()
 	end
 end
+
+-- ScreenEvaluationSummary / ScreenNameEntryTraditional are 2-player layouts and are not
+-- laid out for four players: in the quad style, skip them and go straight to the profile-save summary.
+if Branch and Branch.AllowScreenEvalSummary and #PlayerNumber > 2 then
+	local function is_quad()
+		local s = GAMESTATE:GetCurrentStyle()
+		return s ~= nil and s:GetName() == "quad"
+	end
+	local orig_summary = Branch.AllowScreenEvalSummary
+	Branch.AllowScreenEvalSummary = function()
+		if is_quad() then return "ScreenProfileSaveSummary" end
+		return orig_summary()
+	end
+	local orig_name = Branch.AllowScreenNameEntry
+	Branch.AllowScreenNameEntry = function()
+		if is_quad() then return "ScreenProfileSaveSummary" end
+		return orig_name()
+	end
+end

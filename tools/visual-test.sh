@@ -16,5 +16,5 @@ vt_shot quad-gameplay
 vt_stop
 # Optional: run the full suite (unit self-test + scripted per-player input smoke test)
 if [ "$2" = "--all" ]; then
-  "$REPO/tools/selftest.sh" && "$REPO/tools/input-test.sh" && "$REPO/tools/menu-join-test.sh" && "$REPO/tools/diff-change-test.sh"
+  "$REPO/tools/selftest.sh" && "$REPO/tools/input-test.sh" && "$REPO/tools/menu-join-test.sh" && "$REPO/tools/diff-change-test.sh" && "$REPO/tools/eval-flow-test.sh"
 fi
