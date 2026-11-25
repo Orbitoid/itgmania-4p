@@ -36,6 +36,8 @@ screen quarter. Regenerate P3/P4 metrics with `python3 tools/gen-4p-metrics.py`.
 
 ## Known limitations / UNVERIFIED
 - Real dance pads and audio are UNVERIFIED (only keyboard under a dummy audio driver was tested).
-- Menu screens other than gameplay/select-music/evaluation are not laid out for 3-4 players.
+- Menu screens other than title/select-music/gameplay/evaluation are not laid out for 3-4 players. In the quad style the theme skips ScreenEvaluationSummary and ScreenNameEntry (goes straight to profile save); ScreenPlayerOptions is stock SL (2-player layout, UNVERIFIED with 4 players).
 - Tug/Rave/battle modes remain 2-player only. Saved data formats are unchanged.
 - `tools/diff-change-test.sh`: per-player difficulty change on select music (see 4P_NOTES run 7).
+- `tools/eval-flow-test.sh`: plays the test song to the end with four difficulties, checks the evaluation screen is reached and 2-player-only screens are skipped.
+- `tools/visual-test.sh 25 --all` runs everything (~10 min under llvmpipe).

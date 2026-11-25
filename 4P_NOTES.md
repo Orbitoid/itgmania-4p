@@ -1,6 +1,10 @@
-STATUS: IN PROGRESS (run 7: per-player difficulty change verified; remaining: options/summary/name-entry screens in quad, final docs pass)
+STATUS: COMPLETE
 
 # 4-player ITGmania — working notes (memory file; read first every run)
+
+## FINAL SUMMARY (run 8)
+Four-player (dance `quad` style, 4 players x 4 columns, one pad each) works in an `-DITG_MAX_PLAYERS=4` build (default 2 = stock behaviour). Implemented: PLAYER_3/4 + GameController_3/4, quad style, per-player field/score/life/combo/judgment layout in overlay theme `Simply Love 4P`, 3-player join, profile slots, title-screen join, quad select-music and evaluation screens, backward-compatible save/cache formats. Tests: in-engine selftest (57 pass), scripted input test (zero cross-talk), menu-join, per-player difficulty change, evaluation flow. See docs/4-player.md and docs/screenshots/.
+UNVERIFIED: real dance pads, audio, ScreenPlayerOptions with 4 players, network/Rave/Tug modes (2P only), Windows/macOS builds.
 
 ## Environment / visual verification: WORKS
 Display verified: the game runs under Xvfb + Mesa llvmpipe, F12-free: I use `import -window root` and Read the PNG.
@@ -133,3 +137,12 @@ Stage 4 theme layout (score/life/combo/judgment per quarter, colours), evaluatio
 ## Next (run 8)
 1. ScreenPlayerOptions / ScreenEvaluationSummary / ScreenNameEntry in quad (lay out or skip), evaluation after real play with 4 different difficulties.
 2. Final docs/4-player.md pass (mention diff-change-test), re-run `tools/visual-test.sh 25 --all`, then STATUS: COMPLETE.
+
+## Run 8
+- Fresh container, same setup, 4P build OK (~8 min with -j8).
+- Theme: in quad style Branch.AllowScreenEvalSummary/AllowScreenNameEntry go straight to ScreenProfileSaveSummary (2P layouts). New tools/eval-flow-test.sh plays the song to the end: PASS (ScreenGameplay -> ScreenEvaluationStage -> ScreenProfileSave -> ScreenSelectMusic, no NameEntry/Summary). Added to visual-test.sh --all.
+- Fixed tools/selftest.sh (required a DONE log line that is not always flushed; returned rc=1 despite 57/0 and aborted the --all chain). Now waits for process exit.
+- Re-ran: selftest 57/0, input-test PASS (P1=13/P2=28/P3=57/P4=83, zero cross-talk), menu-join-test PASS, diff-change-test OK, eval-flow-test PASS.
+- Screenshot looked at: docs/screenshots/12-quad-evaluation-4-difficulties-real-play.png (real play to song end: Beginner1/Easy3/Medium6/Hard9, misses 96/192/384/576, four coloured columns, no overlap). The shot after pressing Start on evaluation was black (transition), uninformative.
+## Next
+Nothing required. Optional: ScreenPlayerOptions layout for 4P, real-pad testing.
